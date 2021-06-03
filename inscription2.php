@@ -6,7 +6,29 @@ $mail=$_POST['mail'];
 $password=$_POST['password'];
 $pass=$_POST['password2'];
 
-echo"vous etes ".$prenom." ".$nom;
+    if(!empty($prenom)&& !empty($nom)&& !empty($mail)&& !empty($password)&& !empty($pass)){
+        if($password==$pass){
+            //test de connexion bdd
+            try{
+            $pdo= new PDO("mysql:host=127.0.0.1;dbname=jeu","root",""); 
+            echo"connexion bdd reussi";
+            $req=$pdo->prepare("INSERT INTO utilisateur(nom,prenom,mail,password) VALUES(?,?,?,?)");
+            $req->execute(array($nom,$prenom,$mail,$password));
+            echo"vous avez été ajouté dans la bdd";
+            }
+            catch(PDOException $e){
+                echo $e->getMessage();
+            }
+        }
+        else{
+            echo"<center> les mots de passe ne sont pas identique</center>";
+            header("Refresh: 2; URL=inscription.php");
+        }
+    }
+    else{
+        echo"<center>un ou plusieurs champs ne sont pas remplis</center>";
+        header("Refresh: 2; URL=inscription.php");
+    }
 }
 else{
     //renvoie sur la page inscription.php si le bouton submit n'est pas appuyé
